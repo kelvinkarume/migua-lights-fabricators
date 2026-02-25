@@ -43,8 +43,8 @@ class ProductionReportController extends Controller
 
         // TOTALS
         $totals = (clone $baseQuery)->select(
-            DB::raw("SUM(CASE WHEN product_types.name = 'metre_box' THEN productions.quantity ELSE 0 END) as metre_total"),
-            DB::raw("SUM(CASE WHEN product_types.name = 'adapter_box' THEN productions.quantity ELSE 0 END) as adapter_total")
+            DB::raw("SUM(CASE WHEN product_types.name = 'metrebox' THEN productions.quantity ELSE 0 END) as metre_total"),
+            DB::raw("SUM(CASE WHEN product_types.name = 'adapterbox' THEN productions.quantity ELSE 0 END) as adapter_total")
         )->first();
 
         return view('admin.reports.production', [

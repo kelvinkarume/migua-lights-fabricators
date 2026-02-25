@@ -1,6 +1,30 @@
 @extends('layouts.public')
 
 @section('content')
+<!-- Floating Go Back Button -->
+<a href="{{ url()->previous() }}" 
+   style="
+       position: fixed;
+       top: 20px;
+       left: 20px;
+       z-index: 1000;
+       width: 45px;
+       height: 45px;
+       background-color: #0d6efd; /* Bootstrap primary color */
+       color: white;
+       border-radius: 50%;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+       text-decoration: none;
+       font-size: 20px;
+       transition: background-color 0.2s;
+   "
+   onmouseover="this.style.backgroundColor='#0b5ed7'"
+   onmouseout="this.style.backgroundColor='#0d6efd'">
+   ←
+</a>
 <div class="container">
     <div class="card">
         <div class="card-header bg-dark text-white">

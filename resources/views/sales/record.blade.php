@@ -1,6 +1,30 @@
 @extends('layouts.public')
 
 @section('content')
+<!-- Floating Go Back Button -->
+<a href="{{ url()->previous() }}" 
+   style="
+       position: fixed;
+       top: 20px;
+       left: 20px;
+       z-index: 1000;
+       width: 45px;
+       height: 45px;
+       background-color: #0d6efd; /* Bootstrap primary color */
+       color: white;
+       border-radius: 50%;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+       text-decoration: none;
+       font-size: 20px;
+       transition: background-color 0.2s;
+   "
+   onmouseover="this.style.backgroundColor='#0b5ed7'"
+   onmouseout="this.style.backgroundColor='#0d6efd'">
+   ←
+</a>
 <div class="container">
     <div class="card">
         <div class="card-header bg-dark text-white">
@@ -39,6 +63,39 @@
                     Save Sales
                 </button>
             </form>
+
+            {{-- ================= TABLE FOR TODAY'S SALES ================= --}}
+            @if(isset($salesToday) && $salesToday->count())
+            <hr>
+            <h5>Today's Sales</h5>
+            <table class="table table-bordered table-striped mt-2">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Product Type</th>
+                        <th>Size</th>
+                        <th>Picked</th>
+                        <th>Sold</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($salesToday as $sale)
+                        @foreach($sale->details as $detail)
+                            <tr>
+                                <td>{{ $sale->productType->name }}</td>
+                                <td>{{ $detail->productSize->size }}</td>
+                                <td>{{ $detail->quantity_picked }}</td>
+                                <td>{{ $detail->quantity_sold }}</td>
+                                <td>{{ number_format($detail->price_per_size, 2) }}</td>
+                                <td>{{ number_format($detail->total_amount, 2) }}</td>
+                            </tr>
+                        @endforeach
+                    @endforeach
+                </tbody>
+            </table>
+            @endif
+            {{-- ========================================================== --}}
         </div>
     </div>
 </div>
@@ -62,7 +119,6 @@ document.getElementById('product_type').addEventListener('change', function() {
                     <div class="mb-2">
                         <label>${size.size}</label>
 
-                        <!-- FIXED: picked quantity default value -->
                         <input
                             type="number"
                             name="quantities_picked[${size.id}]"

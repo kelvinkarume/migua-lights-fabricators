@@ -3,15 +3,15 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\ProductType;
 
 class ProductTypeSeeder extends Seeder
 {
-    public function run(): void
+    public function run()
     {
-        DB::table('product_types')->insert([
-            ['name' => 'metre_box'],
-            ['name' => 'adapter_box'],
-        ]);
+        $types = ['metrebox', 'adapterbox'];
+        foreach ($types as $type) {
+            ProductType::firstOrCreate(['name' => $type]);
+        }
     }
 }

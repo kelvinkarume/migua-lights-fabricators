@@ -49,10 +49,10 @@ class SalesReportController extends Controller
 
         // ====== TOTALS (FIXED) ======
         $totals = (clone $query)->select(
-            DB::raw("SUM(CASE WHEN product_types.name = 'metre_box' THEN sale_details.quantity_sold ELSE 0 END) as metre_total_qty"),
-            DB::raw("SUM(CASE WHEN product_types.name = 'adapter_box' THEN sale_details.quantity_sold ELSE 0 END) as adapter_total_qty"),
-            DB::raw("SUM(CASE WHEN product_types.name = 'metre_box' THEN sale_details.total_amount ELSE 0 END) as metre_total_amount"),
-            DB::raw("SUM(CASE WHEN product_types.name = 'adapter_box' THEN sale_details.total_amount ELSE 0 END) as adapter_total_amount")
+            DB::raw("SUM(CASE WHEN product_types.name = 'metrebox' THEN sale_details.quantity_sold ELSE 0 END) as metre_total_qty"),
+            DB::raw("SUM(CASE WHEN product_types.name = 'adapterbox' THEN sale_details.quantity_sold ELSE 0 END) as adapter_total_qty"),
+            DB::raw("SUM(CASE WHEN product_types.name = 'metrebox' THEN sale_details.total_amount ELSE 0 END) as metre_total_amount"),
+            DB::raw("SUM(CASE WHEN product_types.name = 'adapterbox' THEN sale_details.total_amount ELSE 0 END) as adapter_total_amount")
         )->first();
 
         return view('admin.reports.sales', [

@@ -2,7 +2,8 @@
 
 @section('content')
 <div class="container">
-    <div class="card">
+
+    <div class="card mb-4">
         <div class="card-header bg-dark text-white">
             Monthly Payroll Report
         </div>
@@ -26,13 +27,43 @@
                 </div>
             </form>
 
+            {{-- ================= PENDING ADVANCES ================= --}}
+            @if(isset($pendingAdvances) && $pendingAdvances->count())
+                <div class="mb-4">
+                    <h5>Pending Salary Advances</h5>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Worker</th>
+                                <th>Amount</th>
+                                <th>Date Requested</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($pendingAdvances as $advance)
+                                <tr>
+                                    <td>{{ $advance->user->name }}</td>
+                                    <td>{{ number_format($advance->amount, 2) }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($advance->advance_date)->format('d M, Y') }}</td>
+                                    <td>
+                                        <a href="{{ route('admin.payroll.approve', $advance->id) }}" class="btn btn-sm btn-success" onclick="return confirm('Approve this advance?')">Approve</a>
+                                        <a href="{{ route('admin.payroll.reject', $advance->id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Reject this advance?')">Reject</a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+
             {{-- ================= PAYROLL TABLE ================= --}}
             <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th>Worker</th>
                         <th>Basic Salary</th>
-                        <th>Total Advances</th>
+                        <th>Total Approved Advances</th>
                         <th>Final Pay</th>
                     </tr>
                 </thead>

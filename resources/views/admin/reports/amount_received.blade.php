@@ -15,11 +15,11 @@
                     <div class="col-md-4">
                         <label>Filter</label>
                         <select name="filter" class="form-control">
-                            <option value="day" {{ $filterType == 'day' ? 'selected' : '' }}>Day</option>
-                            <option value="week" {{ $filterType == 'week' ? 'selected' : '' }}>Week</option>
-                            <option value="month" {{ $filterType == 'month' ? 'selected' : '' }}>Month</option>
-                            <option value="year" {{ $filterType == 'year' ? 'selected' : '' }}>Year</option>
-                        </select>
+    <option value="day"   {{ $filter == 'day' ? 'selected' : '' }}>Day</option>
+    <option value="week"  {{ $filter == 'week' ? 'selected' : '' }}>Week</option>
+    <option value="month" {{ $filter == 'month' ? 'selected' : '' }}>Month</option>
+    <option value="year"  {{ $filter == 'year' ? 'selected' : '' }}>Year</option>
+</select>
                     </div>
                     <div class="col-md-4">
                         <label>Date</label>

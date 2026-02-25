@@ -11,6 +11,7 @@
                 <div class="card-body">
                     <form method="POST" action="{{ route('attendance.update', $attendance->id) }}">
                         @csrf
+                        @method('PUT')
 
                         <div class="mb-3">
                             <label>Date</label>
@@ -20,8 +21,8 @@
                         <div class="mb-3">
                             <label>Status</label>
                             <select name="status" class="form-control">
-                                <option value="Present" {{ $attendance->status == 'Present' ? 'selected' : '' }}>Present</option>
-                                <option value="Absent" {{ $attendance->status == 'Absent' ? 'selected' : '' }}>Absent</option>
+                                <option value="present" {{ $attendance->status == 'present' ? 'selected' : '' }}>Present</option>
+                                <option value="absent" {{ $attendance->status == 'absent' ? 'selected' : '' }}>Absent</option>
                             </select>
                         </div>
 

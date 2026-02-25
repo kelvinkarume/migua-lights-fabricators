@@ -1,15 +1,19 @@
 @extends('layouts.public')
 
 @section('content')
-<div class="container">
-    <div class="card">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-            <span>Record Production</span>
 
-            {{-- BACK BUTTON ONLY --}}
-            <a href="{{ route('production.dashboard') }}" class="btn btn-light btn-sm">
-                ← Back to Dashboard
-            </a>
+<div class="container mt-4">
+
+    {{-- BACK BUTTON AT TOP LEFT --}}
+    <div class="mb-3">
+        <a href="{{ route('production.dashboard') }}" class="btn btn-outline-dark btn-sm">
+            <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
+        </a>
+    </div>
+    
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Record Production</h5>
         </div>
 
         <div class="card-body">
@@ -80,4 +84,5 @@ document.getElementById('product_type').addEventListener('change', function() {
         });
 });
 </script>
+
 @endsection

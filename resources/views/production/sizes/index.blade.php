@@ -2,60 +2,75 @@
 
 @section('content')
 <div class="container">
-
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-0">📦 Manage Product Sizes</h2>
-
-        {{-- BACK BUTTON ONLY --}}
-        <a href="{{ route('production.dashboard') }}" class="btn btn-secondary btn-sm">
-            ← Back to Dashboard
-        </a>
-    </div>
+    <h2 class="mb-3">📦 Manage Product Sizes</h2>
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <div class="row">
-        @foreach($productTypes as $type)
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-header bg-dark text-white">
-                    {{ strtoupper(str_replace('_', ' ', $type->name)) }}
-                </div>
-
-                <div class="card-body">
-                    <form method="POST" action="{{ route('production.sizes.store') }}">
-                        @csrf
-                        <input type="hidden" name="product_type_id" value="{{ $type->id }}">
-                        <input type="number" name="price" class="form-control" placeholder="Enter price" required>
-
-                        <div class="input-group mb-3">
-                            <input type="text" name="size" class="form-control"
-                                   placeholder="e.g 12x12 or 4x4x4" required>
-                            <button class="btn btn-success">Add Size</button>
-                        </div>
-                    </form>
-
-                    <ul class="list-group">
-                        @forelse($type->sizes as $size)
-                            <li class="list-group-item d-flex justify-content-between">
-                                {{ $size->size }}
-                                <a href="{{ route('production.sizes.delete', $size->id) }}"
-                                   class="btn btn-sm btn-danger"
-                                   onclick="return confirm('Delete this size?')">
-                                   Delete
-                                </a>
-                            </li>
-                        @empty
-                            <li class="list-group-item text-muted">No sizes added yet</li>
-                        @endforelse
-                    </ul>
-                </div>
-            </div>
-        </div>
-        @endforeach
+    <div class="mb-3">
+        <label>Select Product Type:</label>
+        <select id="product_type" class="form-control">
+            <option value="">-- Select Type --</option>
+            @foreach($productTypes as $type)
+                <option value="{{ $type->id }}">{{ ucfirst($type->name) }}</option>
+            @endforeach
+        </select>
     </div>
 
+    <div id="sizesSection" style="display:none;">
+        <form method="POST" action="{{ route('production.sizes.store') }}">
+            @csrf
+            <input type="hidden" name="product_type_id" id="selected_type_id">
+
+            <div class="input-group mb-3">
+                <input type="text" name="size" class="form-control" placeholder="Enter size (e.g 12x12 or 6*6*6)" required>
+                
+                <button class="btn btn-success">Add Size</button>
+            </div>
+        </form>
+
+        <ul class="list-group" id="sizesList">
+            <!-- Loaded via AJAX -->
+        </ul>
+    </div>
 </div>
+
+<script>
+document.getElementById('product_type').addEventListener('change', function() {
+    const typeId = this.value;
+    const sizesSection = document.getElementById('sizesSection');
+    const sizesList = document.getElementById('sizesList');
+    const typeInput = document.getElementById('selected_type_id');
+
+    if (!typeId) {
+        sizesSection.style.display = 'none';
+        sizesList.innerHTML = '';
+        typeInput.value = '';
+        return;
+    }
+
+    typeInput.value = typeId;
+    sizesSection.style.display = 'block';
+
+    fetch(`/production/sizes/load/${typeId}`)
+        .then(res => res.json())
+        .then(data => {
+            let html = '';
+            if (data.length === 0) {
+                html = '<li class="list-group-item text-muted">No sizes added yet</li>';
+            } else {
+                data.forEach(size => {
+                    html += `
+                        <li class="list-group-item d-flex justify-content-between">
+                            ${size.size} - KES ${size.price}
+                            <a href="/production/sizes/delete/${size.id}" class="btn btn-sm btn-danger"
+                               onclick="return confirm('Delete this size?')">Delete</a>
+                        </li>`;
+                });
+            }
+            sizesList.innerHTML = html;
+        });
+});
+</script>
 @endsection

@@ -3,7 +3,6 @@
 @section('content')
 
 <style>
-    /* ---------- Background Gradient Animation ---------- */
     body {
         margin: 0;
         padding: 0;
@@ -29,7 +28,6 @@
         100% { background-position: 0% 50%; }
     }
 
-    /* ---------- Glowing Illumination ---------- */
     .glow {
         position: absolute;
         width: 400px;
@@ -49,7 +47,6 @@
     .glow2 { background: #2a7cff; top: -120px; right: -120px; }
     .glow3 { background: #00d4ff; bottom: -140px; left: 20%; }
 
-    /* ---------- Login Card ---------- */
     .login-card {
         background: rgba(255, 255, 255, 0.12);
         backdrop-filter: blur(10px);
@@ -59,7 +56,6 @@
         box-shadow: 0 15px 40px rgba(0,0,0,0.25);
     }
 
-    /* ---------- Slideshow ---------- */
     .slideshow {
         height: 70px;
         display: flex;
@@ -77,7 +73,6 @@
         67%, 100% { opacity: 1; }
     }
 
-    /* ---------- Constant message ---------- */
     .constant-msg {
         margin-top: 20px;
         padding: 15px;
@@ -86,10 +81,24 @@
         text-align: center;
         font-weight: 600;
     }
+
+    .return-link {
+        display: block;
+        margin-top: 15px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: 600;
+        color: #fff;
+        transition: 0.3s;
+    }
+
+    .return-link:hover {
+        color: #ffc371;
+        transform: translateY(-2px);
+    }
 </style>
 
 <div class="bg-animation"></div>
-
 <div class="glow glow1"></div>
 <div class="glow glow2"></div>
 <div class="glow glow3"></div>
@@ -97,7 +106,7 @@
 <div class="container vh-100 d-flex justify-content-center align-items-center">
     <div class="col-md-6">
 
-        <!-- Slideshow message -->
+        <!-- Slideshow -->
         <div class="slideshow mb-4">
             <span id="slideText" style="color: indigo;">
                 Migua Fabricators values our employers.
@@ -106,7 +115,7 @@
 
         <!-- Login Card -->
         <div class="login-card">
-            <h3 class="text-dark" style="color: #333; text-align:center; margin-bottom: 20px;">Login</h3>
+            <h3 class="text-center mb-4" style="color: #333;">Login</h3>
 
             <form method="POST" action="{{ route('login') }}">
                 @csrf
@@ -123,9 +132,14 @@
 
                 <button class="btn btn-light w-100" style="color: #333;">Login</button>
             </form>
+
+            <!-- ✅ RETURN TO LANDING PAGE -->
+            <a href="{{ route('home') }}" class="return-link">
+                ← Return to Home Page
+            </a>
         </div>
 
-        <!-- Constant message -->
+        <!-- Constant Message -->
         <div class="constant-msg" style="color: green;">
             We deliver quality products.
         </div>
@@ -134,7 +148,6 @@
 </div>
 
 <script>
-    // Slideshow Messages
     const slides = [
         "Migua Fabricators values our employers.",
         "Feel free to work efficiently.",

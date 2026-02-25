@@ -57,30 +57,61 @@ class ReportController extends Controller
         ]);
     }
 
-    public function amountReceived(Request $request)
-    {
-        // example logic, adjust table & columns to match your DB
-        $filter = $request->filter ?? 'day';
-        $date   = $request->date ?? now()->toDateString();
+   public function amountReceived(Request $request)
+{
+    $filter = $request->filter ?? 'day';
+    $date   = $request->date ?? now()->toDateString();
 
-        $query = DB::table('payments'); // change to your payments table
+    $query = DB::table('sale_details')
+        ->join('product_sizes', 'sale_details.product_size_id', '=', 'product_sizes.id')
+        ->join('product_types', 'product_sizes.product_type_id', '=', 'product_types.id');
 
-        if ($filter === 'day') {
-            $query->whereDate('created_at', $date);
-        } elseif ($filter === 'week') {
-            $query->whereBetween('created_at', [
-                Carbon::parse($date)->startOfWeek(),
-                Carbon::parse($date)->endOfWeek(),
-            ]);
-        } elseif ($filter === 'month') {
-            $query->whereMonth('created_at', Carbon::parse($date)->month)
-                  ->whereYear('created_at', Carbon::parse($date)->year);
-        } elseif ($filter === 'year') {
-            $query->whereYear('created_at', Carbon::parse($date)->year);
-        }
-
-        $totalAmount = $query->sum('amount');
-
-        return view('admin.reports.amount_received', compact('totalAmount', 'filter', 'date'));
+    // Apply filter
+    if ($filter === 'day') {
+        $query->whereDate('sale_details.created_at', $date);
+    } elseif ($filter === 'week') {
+        $query->whereBetween('sale_details.created_at', [
+            Carbon::parse($date)->startOfWeek(),
+            Carbon::parse($date)->endOfWeek(),
+        ]);
+    } elseif ($filter === 'month') {
+        $query->whereMonth('sale_details.created_at', Carbon::parse($date)->month)
+              ->whereYear('sale_details.created_at', Carbon::parse($date)->year);
+    } elseif ($filter === 'year') {
+        $query->whereYear('sale_details.created_at', Carbon::parse($date)->year);
     }
+
+    // Total amount received
+    $totalAmount = (clone $query)->sum('sale_details.total_amount');
+
+    // Breakdown by type and size
+    $amountPerSize = (clone $query)
+        ->select(
+            'product_types.name as type_name',
+            'product_sizes.size as size_name',
+            DB::raw('SUM(sale_details.total_amount) as total_amount')
+        )
+        ->groupBy('product_types.name', 'product_sizes.size')
+        ->get();
+
+    // Totals per product type
+    $totals = (clone $query)
+        ->select(
+            DB::raw("SUM(CASE WHEN product_types.name = 'metrebox' THEN sale_details.total_amount ELSE 0 END) as totalMetre"),
+            DB::raw("SUM(CASE WHEN product_types.name = 'adapterbox' THEN sale_details.total_amount ELSE 0 END) as totalAdapter")
+        )
+        ->first();
+
+    $totalMetre = $totals->totalMetre ?? 0;
+    $totalAdapter = $totals->totalAdapter ?? 0;
+
+    return view('admin.reports.amount_received', compact(
+        'totalAmount',
+        'amountPerSize',
+        'totalMetre',
+        'totalAdapter',
+        'filter',
+        'date'
+    ));
+}
 }

@@ -24,11 +24,18 @@ class SalesController extends Controller
         RECORD SALES PAGE
     ===================================================== */
     public function create()
-    {
-        $productTypes = ProductType::all();
-        return view('sales.record', compact('productTypes'));
-    }
+{
+    $productTypes = ProductType::all();
 
+    // Fetch today's sales
+    $today = now()->format('Y-m-d');
+    $salesToday = Sale::with('details.productSize', 'productType')
+        ->whereDate('sales_date', $today)
+        ->orderBy('sales_date', 'desc')
+        ->get();
+
+    return view('sales.record', compact('productTypes', 'salesToday'));
+}
     /* =====================================================
         LOAD SIZES BY PRODUCT TYPE
     ===================================================== */

@@ -14,5 +14,11 @@ class SalaryAdvance extends Model
         'advance_date',
         'amount',
         'month',
+        'status',
     ];
+
+      public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

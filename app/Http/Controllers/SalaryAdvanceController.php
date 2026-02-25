@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\SalaryAdvance;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class SalaryAdvanceController extends Controller
 {
@@ -22,8 +23,11 @@ class SalaryAdvanceController extends Controller
         ]);
 
         SalaryAdvance::create([
-            'user_id' => Auth::id(),
-            'amount'  => $request->amount,
+            'user_id'      => Auth::id(),
+            'amount'       => $request->amount,
+            'advance_date' => Carbon::today(),
+            'month'        => Carbon::now()->format('F Y'),
+            'status'       => 'pending', // ✅ Automatically set new advances to pending
         ]);
 
         return back()->with('success', 'Salary advance recorded successfully');

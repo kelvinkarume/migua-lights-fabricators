@@ -17,6 +17,9 @@
             background: linear-gradient(120deg, #1f3b1f, #2e7d32, #a5d6a7);
             color: #fff;
         }
+        .navbar-nav .nav-link {
+            color: #fff !important;
+        }
     </style>
 </head>
 <body>
@@ -31,21 +34,22 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
+
+                {{-- Guest Links --}}
                 @guest
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('login') }}">Login</a>
                     </li>
-
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('register') }}">Signup</a>
                     </li>
                 @endguest
 
+                {{-- Authenticated Links --}}
                 @auth
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
                     </li>
-
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('logout') }}"
                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -54,13 +58,14 @@
                     </li>
                 @endauth
 
+                {{-- Public Links --}}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/about') }}">About</a>
+                    <a class="nav-link" href="{{ route('about') }}">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('contact') }}">Contact</a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/contact') }}">Contact</a>
-                </li>
             </ul>
         </div>
     </div>
@@ -70,12 +75,13 @@
     @yield('content')
 </main>
 
-<footer class="footer text-center">
+<footer class="footer text-center mt-auto">
     <div class="container">
         <p class="mb-0">© {{ date('Y') }} Migua Fabricators. All rights reserved.</p>
     </div>
 </footer>
 
+{{-- Logout Form --}}
 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
     @csrf
 </form>
