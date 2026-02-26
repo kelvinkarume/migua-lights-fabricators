@@ -1,6 +1,9 @@
 @extends('layouts.public')
 
 @section('content')
+<a href="{{ route('home') }}" class="btn btn-outline-primary floating-back-btn">
+    <i class="bi bi-arrow-left-circle"></i> Back to Home
+</a>
 
 <!-- AOS Animation CSS -->
 <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
@@ -31,7 +34,7 @@
     }
 
     .product-img {
-        height: 160px; /* smaller */
+        height: 160px;
         object-fit: cover;
     }
 
@@ -62,9 +65,22 @@
         max-width: 600px;
         margin: auto;
     }
+    .floating-back-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 9999;
+    border-radius: 30px;
+    padding: 8px 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    transition: 0.3s ease;
+}
+
+.floating-back-btn:hover {
+    transform: translateY(-2px);
+}
 </style>
 
-<div class="container mt-5 mb-5">
 
     <div class="premium-header" data-aos="fade-down">
         <h2 class="section-title">Our Premium Products</h2>
@@ -76,6 +92,7 @@
 
     <div class="row g-4">
 
+        {{-- EXISTING PRODUCTS (UNCHANGED) --}}
         <!-- Metre Box -->
         <div class="col-md-3" data-aos="fade-up">
             <div class="card product-card">
@@ -180,10 +197,115 @@
             </div>
         </div>
 
+        {{-- NEW PRODUCTS ADDED BELOW --}}
+
+        <!-- Solar Floodlights -->
+        <div class="col-md-3" data-aos="fade-up">
+            <div class="card product-card">
+                <img src="{{ asset('images/solarflood.jpg') }}" class="card-img-top product-img">
+                <div class="card-body text-center">
+                    <h6>Solar Floodlights</h6>
+                    <p class="small">High-power outdoor solar floodlights for security and compound lighting.</p>
+                    <div class="price-tag mb-2">KES 6,500</div>
+                    <a href="#" class="btn btn-primary order-btn">Order Now</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Half Moon -->
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+            <div class="card product-card">
+                <img src="{{ asset('images/halfmoon.jpg') }}" class="card-img-top product-img">
+                <div class="card-body text-center">
+                    <h6>Half Moon Light</h6>
+                    <p class="small">Modern half-moon wall lighting for stylish indoor decor.</p>
+                    <div class="price-tag mb-2">KES 1,500</div>
+                    <a href="#" class="btn btn-primary order-btn">Order Now</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Single Pendant -->
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+            <div class="card product-card">
+                <img src="{{ asset('images/singlependant.jpg') }}" class="card-img-top product-img">
+                <div class="card-body text-center">
+                    <h6>Single Pendant Light</h6>
+                    <p class="small">Elegant hanging light ideal for dining and kitchen areas.</p>
+                    <div class="price-tag mb-2">KES 2,800</div>
+                    <a href="#" class="btn btn-primary order-btn">Order Now</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chandelier -->
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+            <div class="card product-card">
+                <img src="{{ asset('images/chandelier.jpg') }}" class="card-img-top product-img">
+                <div class="card-body text-center">
+                    <h6>Chandelier Lighting</h6>
+                    <p class="small">Luxury chandelier lighting for living rooms and halls.</p>
+                    <div class="price-tag mb-2">KES 12,000</div>
+                    <a href="#" class="btn btn-primary order-btn">Order Now</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trunking -->
+        <div class="col-md-3" data-aos="fade-up">
+            <div class="card product-card">
+                <img src="{{ asset('images/trunking.jpg') }}" class="card-img-top product-img">
+                <div class="card-body text-center">
+                    <h6>Trunking</h6>
+                    <p class="small">Durable cable trunking for neat and secure wiring installations.</p>
+                    <div class="price-tag mb-2">KES 750</div>
+                    <a href="#" class="btn btn-primary order-btn">Order Now</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wall Bracket -->
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+            <div class="card product-card">
+                <img src="{{ asset('images/wallbracket.jpg') }}" class="card-img-top product-img">
+                <div class="card-body text-center">
+                    <h6>Wall Bracket</h6>
+                    <p class="small">Strong wall mounting brackets for lights and fixtures.</p>
+                    <div class="price-tag mb-2">KES 900</div>
+                    <a href="#" class="btn btn-primary order-btn">Order Now</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pendant -->
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+            <div class="card product-card">
+                <img src="{{ asset('images/pendant.jpg') }}" class="card-img-top product-img">
+                <div class="card-body text-center">
+                    <h6>Pendant Lighting</h6>
+                    <p class="small">Modern decorative pendant lighting for stylish interiors.</p>
+                    <div class="price-tag mb-2">KES 3,500</div>
+                    <a href="#" class="btn btn-primary order-btn">Order Now</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- CCTV Camera -->
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+            <div class="card product-card">
+                <img src="{{ asset('images/cctv.jpg') }}" class="card-img-top product-img">
+                <div class="card-body text-center">
+                    <h6>CCTV Camera</h6>
+                    <p class="small">High-definition security surveillance cameras for homes and businesses.</p>
+                    <div class="price-tag mb-2">KES 5,500</div>
+                    <a href="#" class="btn btn-primary order-btn">Order Now</a>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
-<!-- AOS Animation Script -->
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 <script>
     AOS.init({

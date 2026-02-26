@@ -9,7 +9,7 @@
 
         <div class="col-md-6">
             <div class="card">
-                <img src="{{ asset('images/metre_box.jpg') }}" class="card-img-top" alt="Metre Box">
+                <img src="{{ asset('images/metrebox.jpg') }}" class="card-img-top" alt="Metre Box">
                 <div class="card-body">
                     <h5 class="card-title">Metre Box</h5>
                     <p class="card-text">
@@ -22,7 +22,7 @@
 
         <div class="col-md-6">
             <div class="card">
-                <img src="{{ asset('images/adapter_box.jpg') }}" class="card-img-top" alt="Adapter Box">
+                <img src="{{ asset('images/adapterbox.jpg') }}" class="card-img-top" alt="Adapter Box">
                 <div class="card-body">
                     <h5 class="card-title">Adapter Box</h5>
                     <p class="card-text">
