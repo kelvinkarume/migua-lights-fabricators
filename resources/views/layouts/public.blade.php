@@ -45,20 +45,12 @@
                     </li>
                 @endguest
 
-                {{-- Authenticated Links --}}
-                @auth
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('logout') }}"
-                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                           Logout
-                        </a>
-                    </li>
-                @endauth
+               
 
                 {{-- Public Links --}}
+                 <li class="nav-item">
+                        <a class="nav-link" href="{{ route('company-dashboard') }}">Dashboard</a>
+                    </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('about') }}">About us</a>
                 </li>

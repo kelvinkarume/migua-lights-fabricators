@@ -13,6 +13,7 @@ use App\Http\Controllers\SalaryAdvanceController;
 use App\Http\Controllers\ProductSizeController;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\SalesController;
+use App\Http\Controllers\OrderController;
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\SalaryController;
@@ -26,35 +27,56 @@ use App\Http\Controllers\Admin\SalesReportController;
 | PUBLIC ROUTES
 |--------------------------------------------------------------------------
 */
+
 Route::get('/', fn() => view('home'))->name('home');
+Route::get('/company-dashboard', fn() => view('company-dashboard'))->name('company-dashboard');
 Route::get('/about', fn() => view('about'))->name('about');
 Route::get('/contact', fn() => view('contact'))->name('contact');
 
+
 /*
 |--------------------------------------------------------------------------
-| AUTH ROUTES
+| CUSTOMER ORDER ROUTES (PUBLIC - NOT EMPLOYEES)
 |--------------------------------------------------------------------------
 */
+
+Route::get('/order-check', [OrderController::class, 'checkCustomer'])->name('order.check');
+
+Route::get('/customer-register', [OrderController::class, 'registerForm'])->name('customer.register');
+Route::post('/customer-register', [OrderController::class, 'register'])->name('customer.store');
+
+Route::get('/place-order', [OrderController::class, 'create'])->name('orders.create');
+Route::post('/place-order', [OrderController::class, 'store'])->name('orders.store');
+
+Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('orders.my');
+
+
+/*
+|--------------------------------------------------------------------------
+| AUTH ROUTES (EMPLOYEES ONLY)
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
+
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 
+
 /*
 |--------------------------------------------------------------------------
-| AUTHENTICATED USER ROUTES
+| AUTHENTICATED EMPLOYEE ROUTES
 |--------------------------------------------------------------------------
 */
+
 Route::middleware('auth')->group(function () {
 
-    // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Change password
     Route::get('/change-password', [PasswordController::class, 'show'])->name('password.change');
     Route::post('/change-password', [PasswordController::class, 'update'])->name('password.update');
 
-    // Logout
     Route::post('/logout', function (Request $request) {
         Auth::logout();
         $request->session()->invalidate();
@@ -64,11 +86,11 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | NORMAL USER ROUTES
+    | NORMAL USER ROUTES (EMPLOYEES)
     |--------------------------------------------------------------------------
     */
     Route::middleware(['role:user'])->group(function () {
-        // Attendance
+
         Route::get('/attendance', [UserController::class, 'attendanceForm'])->name('attendance.form');
         Route::post('/attendance', [UserController::class, 'storeAttendance'])->name('attendance.store');
         Route::get('/attendance-summary', [UserController::class, 'attendanceSummary'])->name('attendance.summary');
@@ -76,7 +98,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/attendance/update/{id}', [UserController::class, 'updateAttendance'])->name('attendance.update');
         Route::get('/attendance/delete/{id}', [UserController::class, 'deleteAttendance'])->name('attendance.delete');
 
-        // Salary Advance
         Route::get('/advance', [SalaryAdvanceController::class, 'index'])->name('advance.form');
         Route::post('/advance/save', [SalaryAdvanceController::class, 'save'])->name('advance.save');
     });
@@ -86,6 +107,7 @@ Route::middleware('auth')->group(function () {
     | PRODUCTION ROUTES
     |--------------------------------------------------------------------------
     */
+
     Route::get('/production', [ProductionController::class, 'dashboard'])->name('production.dashboard');
     Route::get('/production/record', [ProductionController::class, 'create'])->name('production.record');
     Route::post('/production/store', [ProductionController::class, 'store'])->name('production.store');
@@ -104,6 +126,7 @@ Route::middleware('auth')->group(function () {
     | SALES ROUTES
     |--------------------------------------------------------------------------
     */
+
     Route::get('/sales', [SalesController::class, 'index'])->name('sales.index');
     Route::get('/sales/record', [SalesController::class, 'create'])->name('sales.record');
     Route::post('/sales/store', [SalesController::class, 'store'])->name('sales.store');
@@ -111,36 +134,37 @@ Route::middleware('auth')->group(function () {
     Route::get('/sales/reports', [SalesController::class, 'reports'])->name('sales.reports');
 });
 
+
 /*
 |--------------------------------------------------------------------------
 | ADMIN ROUTES
 |--------------------------------------------------------------------------
 */
+
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
-    // Salary
     Route::get('/salary', [SalaryController::class, 'index'])->name('admin.salary.index');
     Route::post('/salary', [SalaryController::class, 'store'])->name('admin.salary.store');
     Route::get('/salary/{id}/edit', [SalaryController::class, 'edit'])->name('admin.salary.edit');
     Route::post('/salary/{id}', [SalaryController::class, 'update'])->name('admin.salary.update');
 
-    // Payroll
     Route::get('/payroll', [PayrollController::class, 'index'])->name('admin.payroll.index');
     Route::get('/payroll/approve/{id}', [PayrollController::class, 'approveAdvance'])->name('admin.payroll.approve');
     Route::get('/payroll/reject/{id}', [PayrollController::class, 'rejectAdvance'])->name('admin.payroll.reject');
 
-    // Amount Received Report
     Route::get('/amount-received', [ReportController::class, 'amountReceived'])->name('admin.amount.received');
-
-    // Production & Sales Reports
     Route::get('/production-report', [ProductionReportController::class, 'index'])->name('admin.production.report');
     Route::get('/sales-report', [SalesReportController::class, 'salesReport'])->name('admin.sales.report');
 
-    // Admin edit salary advance (optional)
-    Route::get('/advance/{id}/edit', [\App\Http\Controllers\Admin\SalaryAdvanceController::class, 'edit'])->name('admin.advance.edit');
-    Route::post('/advance/{id}/update', [\App\Http\Controllers\Admin\SalaryAdvanceController::class, 'update'])->name('admin.advance.update');
+    /*
+    |--------------------------------------------------------------------------
+    | ADMIN ORDER MANAGEMENT
+    |--------------------------------------------------------------------------
+    */
 
-    Route::get('/public-dashboard', fn() => view('public-dashboard'))->name('public.dashboard');
+    Route::get('/orders', [OrderController::class, 'adminIndex'])->name('admin.orders');
+    Route::post('/orders/{id}/approve', [OrderController::class, 'approve'])->name('admin.orders.approve');
+    Route::post('/orders/{id}/deliver', [OrderController::class, 'deliver'])->name('admin.orders.deliver');
 });
