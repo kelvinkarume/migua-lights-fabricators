@@ -13,7 +13,7 @@
 
     <style>
         body {
-            background-color: #f8f9fa; /* Soft light background for dashboard */
+            background-color: #a5b1bd; /* Soft light background for dashboard */
         }
 
         /* Sidebar */
@@ -41,7 +41,7 @@
 
         .nav-link:hover {
             background-color: #6c757d;
-            color: #fff;
+            color: #2b8d41;
             border-radius: 0.5rem;
         }
 
@@ -99,6 +99,10 @@
                 <i class="bi bi-graph-up-arrow"></i> Sales Report
             </a>
 
+            <a href="{{ route('admin.inventory.index') }}"
+   class="nav-link {{ request()->routeIs('admin.inventory.*') ? 'active' : '' }}">
+    <i class="bi bi-boxes"></i> Inventory
+</a>
         </div>
         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
     @csrf

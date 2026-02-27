@@ -167,4 +167,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/orders', [OrderController::class, 'adminIndex'])->name('admin.orders');
     Route::post('/orders/{id}/approve', [OrderController::class, 'approve'])->name('admin.orders.approve');
     Route::post('/orders/{id}/deliver', [OrderController::class, 'deliver'])->name('admin.orders.deliver');
+
+    Route::get('/admin/inventory', [App\Http\Controllers\Admin\InventoryController::class, 'index'])
+    ->name('admin.inventory.index');
 });

@@ -24,18 +24,18 @@ class SalesController extends Controller
         RECORD SALES PAGE
     ===================================================== */
     public function create()
-{
-    $productTypes = ProductType::all();
+    {
+        $productTypes = ProductType::all();
+        $today = now()->format('Y-m-d');
 
-    // Fetch today's sales
-    $today = now()->format('Y-m-d');
-    $salesToday = Sale::with('details.productSize', 'productType')
-        ->whereDate('sales_date', $today)
-        ->orderBy('sales_date', 'desc')
-        ->get();
+        $salesToday = Sale::with('details.productSize', 'productType')
+            ->whereDate('sales_date', $today)
+            ->orderBy('sales_date', 'desc')
+            ->get();
 
-    return view('sales.record', compact('productTypes', 'salesToday'));
-}
+        return view('sales.record', compact('productTypes', 'salesToday'));
+    }
+
     /* =====================================================
         LOAD SIZES BY PRODUCT TYPE
     ===================================================== */
@@ -64,7 +64,6 @@ class SalesController extends Controller
 
         foreach ($request->quantities_picked as $sizeId => $pickedQty) {
             $soldQty = (int) ($request->quantities_sold[$sizeId] ?? 0);
-
             $totalPicked += (int) $pickedQty;
             $totalSold   += $soldQty;
         }
@@ -86,9 +85,8 @@ class SalesController extends Controller
 
         // -------- SAVE DETAILS PER SIZE --------
         foreach ($request->quantities_picked as $sizeId => $pickedQty) {
-
             $soldQty = (int) ($request->quantities_sold[$sizeId] ?? 0);
-            $price   = (int) ($request->prices[$sizeId] ?? 0);
+            $price   = (float) ($request->prices[$sizeId] ?? 0);
 
             if ($pickedQty <= 0 && $soldQty <= 0) {
                 continue;
@@ -115,70 +113,48 @@ class SalesController extends Controller
         $productTypes = ProductType::all();
         $query = Sale::query();
 
-        // -------- FILTERS --------
+        // Filters
         if ($request->date) {
             $query->whereDate('sales_date', $request->date);
         }
-
         if ($request->week) {
             $query->whereBetween('sales_date', [
                 Carbon::parse($request->week)->startOfWeek(),
                 Carbon::parse($request->week)->endOfWeek(),
             ]);
         }
-
         if ($request->month) {
             $month = Carbon::parse($request->month);
             $query->whereMonth('sales_date', $month->month)
                   ->whereYear('sales_date', $month->year);
         }
-
         if ($request->year) {
             $query->whereYear('sales_date', $request->year);
         }
 
         $sales = $query->with(['productType', 'details.productSize'])->get();
 
-        // -------- TOTAL SOLD --------
+        // Initialize totals to avoid undefined variable errors
+        $totalPerDay   = collect();
+        $totalPerWeek  = collect();
+        $totalPerMonth = collect();
+        $totalPerYear  = collect();
+
+        if ($sales->count()) {
+            $totalPerDay = $sales->groupBy('sales_date')->map(function ($items) {
+                return $items->sum(fn($sale) => $sale->details->sum('total_amount'));
+            });
+
+            $totalPerWeek = $sales->groupBy(fn($sale) => Carbon::parse($sale->sales_date)->startOfWeek()->format('Y-m-d'))
+                ->map(fn($items) => $items->sum(fn($sale) => $sale->details->sum('total_amount')));
+
+            $totalPerMonth = $sales->groupBy('month')->map(fn($items) => $items->sum(fn($sale) => $sale->details->sum('total_amount')));
+            $totalPerYear  = $sales->groupBy('year')->map(fn($items) => $items->sum(fn($sale) => $sale->details->sum('total_amount')));
+        }
+
         $totalSold = $sales->sum('total_sold');
-
-        // ✅ -------- TOTAL RETURNED (FIXED) --------
         $totalReturned = $sales->sum('total_returned');
-
-        // -------- TOTAL SALES AMOUNT --------
-        $totalSalesAmount = $sales->sum(function ($sale) {
-            return $sale->details->sum('total_amount');
-        });
-
-        // -------- TOTAL PER DAY --------
-        $totalPerDay = $sales->groupBy('sales_date')->map(function ($items) {
-            return $items->sum(function ($sale) {
-                return $sale->details->sum('total_amount');
-            });
-        });
-
-        // -------- TOTAL PER WEEK --------
-        $totalPerWeek = $sales->groupBy(function ($sale) {
-            return Carbon::parse($sale->sales_date)->startOfWeek()->format('Y-m-d');
-        })->map(function ($items) {
-            return $items->sum(function ($sale) {
-                return $sale->details->sum('total_amount');
-            });
-        });
-
-        // -------- TOTAL PER MONTH --------
-        $totalPerMonth = $sales->groupBy('month')->map(function ($items) {
-            return $items->sum(function ($sale) {
-                return $sale->details->sum('total_amount');
-            });
-        });
-
-        // -------- TOTAL PER YEAR --------
-        $totalPerYear = $sales->groupBy('year')->map(function ($items) {
-            return $items->sum(function ($sale) {
-                return $sale->details->sum('total_amount');
-            });
-        });
+        $totalSalesAmount = $sales->sum(fn($sale) => $sale->details->sum('total_amount'));
 
         return view('sales.reports', compact(
             'sales',

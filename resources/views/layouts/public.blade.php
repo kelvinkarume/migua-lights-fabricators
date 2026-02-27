@@ -49,7 +49,7 @@
 
                 {{-- Public Links --}}
                  <li class="nav-item">
-                        <a class="nav-link" href="{{ route('company-dashboard') }}">Dashboard</a>
+                        <a class="nav-link" href="{{ route('company-dashboard') }}">Home</a>
                     </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('about') }}">About us</a>
